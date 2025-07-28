@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>国家育儿补贴计算器</title>
+    <title>国家育儿补贴介绍</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -79,7 +79,7 @@
     <div class="container">
         <div class="content">
             <h2>政策概述</h2>
-            <p>根据中共中央办公厅、国务院办公厅发布的《育儿补贴制度实施方案》，自2025年1月1日起，对符合法律法规规定生育的3周岁以下婴幼儿提供育儿补贴。国家基础标准为每孩每年3600元（约每月300元），补贴发放至婴幼儿年满3周岁。对2025年1月1日前出生且不满3周岁的婴幼儿，按应补贴月数折算计发补贴。该补贴免征个人所得税，且在最低生活保障对象认定时不计入家庭收入。</p >
+            <p>根据中共中央办公厅、国务院办公厅发布的《育儿补贴制度实施方案》，自2025年1月1日起，对符合法律法规规定生育的3周岁以下婴幼儿提供育儿补贴。国家基础标准为每孩每年3600元（约每月300元），补贴发放至婴幼儿年满3周岁。对2025年1月1日前出生且不满3周岁的婴幼儿，按应补贴月数折算计发补贴；已满3周岁的婴幼儿不再享受补贴。该补贴免征个人所得税，且在最低生活保障对象认定时不计入家庭收入。</p >
             <p>申请流程：父母一方或其他监护人可通过育儿补贴信息管理系统线上申请，或至婴幼儿户籍所在地线下申请。补贴通过银行卡或社会保障卡发放。</p >
             <p>本工具由留学生网（lxs.net）制作，最终以实际政策为准。</p >
         </div>
@@ -101,7 +101,7 @@
             }
 
             const birthdate = new Date(birthdateInput);
-            const today = new Date('2025-07-28'); // Current date as per system
+            const today = new Date('2025-07-28T20:25:00'); // Current date and time: 08:25 PM HKT, July 28, 2025
             const ageInMonths = Math.floor((today - birthdate) / (1000 * 60 * 60 * 24 * 30.44)); // Approximate months
 
             if (birthdate > today) {
@@ -109,18 +109,27 @@
                 return;
             }
 
+            const policyStartDate = new Date('2025-01-01');
             const maxAgeMonths = 36; // 3 years
-            let eligibleMonths = Math.min(ageInMonths, maxAgeMonths);
 
-            // Adjust for children born before 2025-01-01 who are under 3
-            if (birthdate < new Date('2025-01-01') && ageInMonths < maxAgeMonths) {
-                eligibleMonths = Math.min(maxAgeMonths - Math.floor((new Date('2025-01-01') - birthdate) / (1000 * 60 * 60 * 24 * 30.44)), maxAgeMonths);
+            if (birthdate < policyStartDate) {
+                const monthsSincePolicyStart = Math.floor((today - policyStartDate) / (1000 * 60 * 60 * 24 * 30.44));
+                if (ageInMonths >= maxAgeMonths) {
+                    document.getElementById('result').innerText = '该孩子已满3周岁，不符合补贴条件。';
+                    return;
+                }
+                const eligibleMonths = Math.min(maxAgeMonths - Math.floor((policyStartDate - birthdate) / (1000 * 60 * 60 * 24 * 30.44)), maxAgeMonths);
+                const totalSubsidy = eligibleMonths * 300;
+                document.getElementById('result').innerText = `根据输入，孩子可领取补贴金额为：${totalSubsidy} 元（基于 ${eligibleMonths} 个月）。`;
+            } else {
+                let eligibleMonths = Math.min(ageInMonths, maxAgeMonths);
+                if (eligibleMonths >= maxAgeMonths) {
+                    document.getElementById('result').innerText = '该孩子已满3周岁，不符合补贴条件。';
+                    return;
+                }
+                const totalSubsidy = eligibleMonths * 300;
+                document.getElementById('result').innerText = `根据输入，孩子可领取补贴金额为：${totalSubsidy} 元（基于 ${eligibleMonths} 个月）。`;
             }
-
-            const subsidyPerMonth = 300;
-            const totalSubsidy = eligibleMonths * subsidyPerMonth;
-
-            document.getElementById('result').innerText = `根据输入，孩子可领取补贴金额为：${totalSubsidy} 元（基于 ${eligibleMonths} 个月）。`;
         }
     </script>
 </body>
