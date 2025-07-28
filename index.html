@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>国家育儿补贴计算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background-color: #007BFF;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+        }
+        .content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+        .calculator {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+        .calculator label, .calculator input, .calculator button {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        .calculator input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .calculator button {
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .calculator button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+            .content, .calculator {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>国家育儿补贴介绍</h1>
+    </header>
+    <div class="container">
+        <div class="content">
+            <h2>政策概述</h2>
+            <p>根据中共中央办公厅、国务院办公厅发布的《育儿补贴制度实施方案》，自2025年1月1日起，对符合法律法规规定生育的3周岁以下婴幼儿提供育儿补贴。国家基础标准为每孩每年3600元（约每月300元），补贴发放至婴幼儿年满3周岁。对2025年1月1日前出生且不满3周岁的婴幼儿，按应补贴月数折算计发补贴。该补贴免征个人所得税，且在最低生活保障对象认定时不计入家庭收入。</p >
+            <p>申请流程：父母一方或其他监护人可通过育儿补贴信息管理系统线上申请，或至婴幼儿户籍所在地线下申请。补贴通过银行卡或社会保障卡发放。</p >
+            <p>本工具由留学生网（lxs.net）制作，最终以实际政策为准。</p >
+        </div>
+        <div class="calculator">
+            <h2>补贴计算工具</h2>
+            <label for="birthdate">请输入孩子出生日期（YYYY-MM-DD）：</label>
+            <input type="date" id="birthdate" required>
+            <button onclick="calculateSubsidy()">计算补贴金额</button>
+            <div class="result" id="result"></div>
+        </div>
+    </div>
+
+    <script>
+        function calculateSubsidy() {
+            const birthdateInput = document.getElementById('birthdate').value;
+            if (!birthdateInput) {
+                document.getElementById('result').innerText = '请先输入出生日期。';
+                return;
+            }
+
+            const birthdate = new Date(birthdateInput);
+            const today = new Date('2025-07-28'); // Current date as per system
+            const ageInMonths = Math.floor((today - birthdate) / (1000 * 60 * 60 * 24 * 30.44)); // Approximate months
+
+            if (birthdate > today) {
+                document.getElementById('result').innerText = '出生日期不得晚于今日。';
+                return;
+            }
+
+            const maxAgeMonths = 36; // 3 years
+            let eligibleMonths = Math.min(ageInMonths, maxAgeMonths);
+
+            // Adjust for children born before 2025-01-01 who are under 3
+            if (birthdate < new Date('2025-01-01') && ageInMonths < maxAgeMonths) {
+                eligibleMonths = Math.min(maxAgeMonths - Math.floor((new Date('2025-01-01') - birthdate) / (1000 * 60 * 60 * 24 * 30.44)), maxAgeMonths);
+            }
+
+            const subsidyPerMonth = 300;
+            const totalSubsidy = eligibleMonths * subsidyPerMonth;
+
+            document.getElementById('result').innerText = `根据输入，孩子可领取补贴金额为：${totalSubsidy} 元（基于 ${eligibleMonths} 个月）。`;
+        }
+    </script>
+</body>
+</html>
